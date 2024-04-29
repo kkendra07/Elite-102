@@ -115,7 +115,7 @@ def check():
           login_button.pack(ipadx=10, ipady=10, expand=True)
           #menu()
 
-login = login_win()
+
 
 #SIDE FUNCTION
 def ex():
