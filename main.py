@@ -19,7 +19,7 @@ root.resizable(True, True)
 root.attributes('-topmost', 1) 
 #root.iconbitmap('bank-vector-icon.ico')
 
-#main menus 
+#starter menu
 def user_sel():
     root.title('K Banks Sign in')
 
@@ -30,31 +30,14 @@ def user_sel():
     signin_button.pack(ipadx=10, ipady=10, expand=True)
 
     input('What can we do for you? \n 1. Log in \n   2. Create Account \n 1-2:')
-    if input == '1':
+    if input == 1:
      log_in()
-    elif input == '2':
+    elif input == 2:
      create_acc()
 
-
-
-
-def menu():
-  root.title('Main menu')
-  input('Good Evening! \n What would you like to do? \n 1. Make a deposit \n 2. Make a withdraw \n 3. Check Balance \n 4. Manage account \n 1-4:')
-  if input == '1':
-    deposit()
-  elif input == '2':
-    withdraw()
-  elif input == '3':
-    balance()
-  elif input == '4':
-    acc_manage()
-
-
-
-
-#main functions
+#starter functions 
 def create_acc():
+  message.pack()
   account_number = int(input("Welcome! Lets get started by creating a 9 digit accont number"))
   #if account_number == number in user_info:
     #print('Account already exists, please sign in or try again.')
@@ -85,44 +68,73 @@ def create_acc():
    create_acc()
 
 
-  
+
 def log_in():
   root.title('K banks log in')
+  login = ttk.Frame(root)
+  login.pack(padx=10, pady=10, fill='x', expand=True)
+  
 
-  ttk.Label(root, text='Hello! Please log in.').pack()
+  ttk.Label(login, text='Hello! Please log in.').pack()
+  global account_number
+  global account_pin
+  account_number = tk.StringVar()
+  account_pin = tk.StringVar()
 
-  testQuery = ('SELECT number FROM user_info')
-  cursor.execute(testQuery)
-
-  accnum_label = ttk.Label(root, text="Account number:")
+  #account_number = int(input("Please enter your 9 digit account number:"))
+  #account_pin = int(input("Please enter your 4 digit pin number:"))
+                    
+  accnum_label = ttk.Label(login, text="Account number:")
   accnum_label.pack(fill='x', expand=True)
 
-  accnum_entry = ttk.Entry(root, textvariable=account_number)
+  accnum_entry = ttk.Entry(login, textvariable=account_number)
   accnum_entry.pack(fill='x', expand=True)
   accnum_entry.focus()
 
-  account_number = int(input("Please enter your 9 digit account number:"))
- 
+  pinnum_label = ttk.Label(login, text="Pin number:")
+  pinnum_label.pack(fill='x', expand=True)
+
+  pinnum_entry = ttk.Entry(login, textvariable=account_pin)
+  pinnum_entry.pack(fill='x', expand=True)
+
+  login_button = ttk.Button(root, text="Enter", command=check)
+  login_button.pack(ipadx=10, ipady=10, expand=True)
+
+
+def check():
+  testQuery = ('SELECT number FROM user_info')
+  cursor.execute(testQuery)
+  
   for item in cursor:
-    if item == input:
+    if item == account_number:
         testQuery = ('SELECT row FROM user_info')
         cursor.execute(testQuery)
 
-        pin_label = ttk.label(root, text="Pin:")
-        pin_label.pack(fill='x', expand=True)
+        if item in cursor == account_pin:
+          login_button = ttk.button(root,text="Log in", command=menu)
+          login_button.pack(ipadx=10, ipady=10, expand=True)
+          #menu()
 
-        pin_entry = ttk.entry(root, textvariable=account_pin)
-        pin_entry.pack(fill='x', expand=True)
+login = login_win()
 
-        account_pin = int(input("Please enter your 4 digit pin:"))
+#SIDE FUNCTION
+def ex():
+  input("You're all set! Anyhting else you'd like to do here? \n yes/no:")
+  if input == 'yes':
+     acc_manage()
+  elif input == 'no':
+     menu()
 
-        if item in cursor == input:
-          menu()
-      
 
 
+def count_digit(num):
+    if (num//10 == 0):
+        return 1
+    else:
+        return 1 + count_digit(num // 10)
     
-  
+
+#main functions 
 def deposit():
   amount_deposit = int(input("How much would you like to deposit?"))
   
@@ -200,37 +212,31 @@ def acc_manage():
   else:
    print("Sorry! Couldn't understand.")
    acc_manage()
-  
-  
+
+#main menu
+def menu():
+  root.title('Main menu')
+  input('Good Evening! \n What would you like to do? \n 1. Make a deposit \n 2. Make a withdraw \n 3. Check Balance \n 4. Manage account \n 1-4:')
+  if input == '1':
+    deposit()
+  elif input == '2':
+    withdraw()
+  elif input == '3':
+    balance()
+  elif input == '4':
+    acc_manage()
 
 
-
-#SIDE FUNCTION
-def ex():
-  input("You're all set! Anyhting else you'd like to do here? \n yes/no:")
-  if input == 'yes':
-     acc_manage()
-  elif input == 'no':
-     menu()
-
-
-
-def count_digit(num):
-    if (num//10 == 0):
-        return 1
-    else:
-        return 1 + count_digit(num // 10)
 
  
 
 #CODE FOR TKINTER
 #main menus TKINTER
 
-#login_button = ttk.Button(root, text="Log in", command=log_in)
-#login_button.pack(ipadx=10, ipady=10, expand=True)
 
-#signin_button = ttk.Button(root, text="Create Account", command=create_acc)
-#signin_button.pack(ipadx=10, ipady=10, expand=True)
+
+#signup_button = ttk.Button(root, text="Create Account", command=create_acc)
+#signup_button.pack(ipadx=10, ipady=10, expand=True)
 
 #mainmenu_button = ttk.Button(root, text='Exit', command=menu)
 #mainmenu_button.pack(ipadx=5, ipady=5, expand=True)
@@ -238,13 +244,13 @@ def count_digit(num):
 
 
 #IMPORT CLOSE AND FUNCTION CALL
+user_sel()
+
 connection.commit()
 
 cursor.close()
 
 connection.close()
-
-user_sel()
 
 root.mainloop()
 
